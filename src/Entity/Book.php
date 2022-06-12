@@ -30,19 +30,20 @@ class Book
     private $author;
 
     /**
-     * @ORM\ManyToMany(targetEntity=Tag::class, inversedBy="books")
+     * @ORM\Column(type="datetime")
      */
-    private $tag;
+    private $createdDate;
 
     /**
-     * @ORM\ManyToMany(targetEntity=User::class, inversedBy="books")
+     * @ORM\OneToMany(targetEntity=Suggestion::class, mappedBy="book")
      */
-    private $user;
+    private $suggestions;
+
+
 
     public function __construct()
     {
-        $this->tag = new ArrayCollection();
-        $this->user = new ArrayCollection();
+        $this->suggestions = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -74,50 +75,44 @@ class Book
         return $this;
     }
 
-    /**
-     * @return Collection<int, Tag>
-     */
-    public function getTag(): Collection
+    public function getCreatedDate(): ?\DateTimeInterface
     {
-        return $this->tag;
+        return $this->createdDate;
     }
 
-    public function addTag(Tag $tag): self
+    public function setCreatedDate(\DateTimeInterface $createdDate): self
     {
-        if (!$this->tag->contains($tag)) {
-            $this->tag[] = $tag;
-        }
-
-        return $this;
-    }
-
-    public function removeTag(Tag $tag): self
-    {
-        $this->tag->removeElement($tag);
+        $this->createdDate = $createdDate;
 
         return $this;
     }
 
     /**
-     * @return Collection<int, User>
+     * @return Collection<int, Suggestion>
      */
-    public function getUser(): Collection
+    public function getSuggestions(): Collection
     {
-        return $this->user;
+        return $this->suggestions;
     }
 
-    public function addUser(User $user): self
+    public function addSuggestion(Suggestion $suggestion): self
     {
-        if (!$this->user->contains($user)) {
-            $this->user[] = $user;
+        if (!$this->suggestions->contains($suggestion)) {
+            $this->suggestions[] = $suggestion;
+            $suggestion->setBook($this);
         }
 
         return $this;
     }
 
-    public function removeUser(User $user): self
+    public function removeSuggestion(Suggestion $suggestion): self
     {
-        $this->user->removeElement($user);
+        if ($this->suggestions->removeElement($suggestion)) {
+            // set the owning side to null (unless already changed)
+            if ($suggestion->getBook() === $this) {
+                $suggestion->setBook(null);
+            }
+        }
 
         return $this;
     }

@@ -70,10 +70,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     private $books;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Suggestion::class, mappedBy="user")
+     */
+    private $suggestions;
+
     public function __construct()
     {
         $this->tags = new ArrayCollection();
         $this->books = new ArrayCollection();
+        $this->suggestions = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -268,5 +274,45 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         }
 
         return $this;
+    }
+
+    public function __toString()
+    {
+        return $this->getFirstName().' '.$this->getLastName();
+    }
+
+    /**
+     * @return Collection<int, Suggestion>
+     */
+    public function getSuggestions(): Collection
+    {
+        return $this->suggestions;
+    }
+
+    public function addSuggestion(Suggestion $suggestion): self
+    {
+        if (!$this->suggestions->contains($suggestion)) {
+            $this->suggestions[] = $suggestion;
+            $suggestion->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSuggestion(Suggestion $suggestion): self
+    {
+        if ($this->suggestions->removeElement($suggestion)) {
+            // set the owning side to null (unless already changed)
+            if ($suggestion->getUser() === $this) {
+                $suggestion->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function isIsVerified(): ?bool
+    {
+        return $this->isVerified;
     }
 }

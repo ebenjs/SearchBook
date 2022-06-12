@@ -36,13 +36,14 @@ class Tag
     private $author;
 
     /**
-     * @ORM\ManyToMany(targetEntity=Book::class, mappedBy="tag")
+     * @ORM\OneToMany(targetEntity=Suggestion::class, mappedBy="tag")
      */
-    private $books;
+    private $suggestions;
 
     public function __construct()
     {
-        $this->books = new ArrayCollection();
+        $this->setCreatedDate(new \DateTime());
+        $this->suggestions = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -87,29 +88,37 @@ class Tag
     }
 
     /**
-     * @return Collection<int, Book>
+     * @return Collection<int, Suggestion>
      */
-    public function getBooks(): Collection
+    public function getSuggestions(): Collection
     {
-        return $this->books;
+        return $this->suggestions;
     }
 
-    public function addBook(Book $book): self
+    public function addSuggestion(Suggestion $suggestion): self
     {
-        if (!$this->books->contains($book)) {
-            $this->books[] = $book;
-            $book->addTag($this);
+        if (!$this->suggestions->contains($suggestion)) {
+            $this->suggestions[] = $suggestion;
+            $suggestion->setTag($this);
         }
 
         return $this;
     }
 
-    public function removeBook(Book $book): self
+    public function removeSuggestion(Suggestion $suggestion): self
     {
-        if ($this->books->removeElement($book)) {
-            $book->removeTag($this);
+        if ($this->suggestions->removeElement($suggestion)) {
+            // set the owning side to null (unless already changed)
+            if ($suggestion->getTag() === $this) {
+                $suggestion->setTag(null);
+            }
         }
 
         return $this;
+    }
+
+    public function __toString()
+    {
+        return $this->getLabel();
     }
 }
