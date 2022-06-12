@@ -39,6 +39,19 @@ class TagRepository extends ServiceEntityRepository
         }
     }
 
+    /**
+    //     * @return Tag[] Returns an array of Tag objects
+    //     */
+    public function findLimit($value): array
+    {
+        return $this->createQueryBuilder('t')
+
+            ->setMaxResults($value)
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
 //    /**
 //     * @return Tag[] Returns an array of Tag objects
 //     */

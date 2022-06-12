@@ -3,35 +3,43 @@
 {% block title %}Tag index{% endblock %}
 
 {% block body %}
-    <h1>Tag index</h1>
+    <div class="row">
+        <div class="col">
+            <h2 class="mt-4">Demandes de Suggestion</h2>
+            <div class="alert alert-info" role="alert">
+                <div>Liste des demandes des membres de la communaute. N'hesitez surtout pas a qpporter vos suggestions a
+                    leur demandes.
+                </div>
+            </div>
+            <div class="row row-cols-1 row-cols-md-2 g-4">
+                {% for tag in tags %}
+                    <div class="col">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">Demande # {{ tag.id }}</h5>
+                                <p class="card-text">{{ tag.label }}</p>
+                                <small>Cree par
+                                    <i><strong>{{ tag.author.firstName~' '~tag.author.lastName }}</strong></i>
+                                    le {{ tag.createdDate ? tag.createdDate|date('Y-m-d H:i:s') : '' }}</small>
+                                <br/>
+                                <a href="#" class="btn btn-sm btn-outline-success mt-3">Faire une suggestion</a>
+                            </div>
+                        </div>
+                    </div>
 
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Id</th>
-                <th>Label</th>
-                <th>CreatedDate</th>
-                <th>actions</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for tag in tags %}
-            <tr>
-                <td>{{ tag.id }}</td>
-                <td>{{ tag.label }}</td>
-                <td>{{ tag.createdDate ? tag.createdDate|date('Y-m-d H:i:s') : '' }}</td>
-                <td>
-                    <a href="{{ path('app_tag_show', {'id': tag.id}) }}">show</a>
-                    <a href="{{ path('app_tag_edit', {'id': tag.id}) }}">edit</a>
-                </td>
-            </tr>
-        {% else %}
-            <tr>
-                <td colspan="4">no records found</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+                {% else %}
+                    no records found
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <br/>
+            <div class="">
+                {{ knp_pagination_render(tags) }}
+            </div>
+        </div>
+    </div>
 
-    <a href="{{ path('app_tag_new') }}">Create new</a>
 {% endblock %}

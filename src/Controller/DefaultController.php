@@ -15,7 +15,7 @@ class DefaultController extends AbstractController
     public function index(TagRepository $tagRepository): Response
     {
         return $this->render('default/index.html.twig', [
-            'tags' => $tagRepository->findAll(),
+            'tags' => $tagRepository->findLimit(3),
         ]);
     }
 }
